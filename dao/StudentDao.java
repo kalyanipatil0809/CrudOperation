@@ -134,8 +134,8 @@ public class StudentDao implements StudentDaoInterface {
 
 			StringBuilder sbFetchQuery = new StringBuilder("select firstName,branch, ");
 			
-			sbFetchQuery.append(subjectName).append(" from studentdetails where ").append(subjectName + " ")
-			.append("in").append("(select max(").append(subjectName + ")").append(" from studentdetails)");
+			sbFetchQuery.append(subjectName).append(" from studentdetails where ").append(subjectName)
+			.append(" in (select max(").append(subjectName + ")").append(" from studentdetails)");
 
 			String sb = sbFetchQuery.toString();
 			Statement statement = connection.createStatement();
