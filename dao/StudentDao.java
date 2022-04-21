@@ -60,7 +60,6 @@ public class StudentDao implements StudentDaoInterface {
 		studentModel = new StudentModel();
 		return studentModel;
 	}
-
 	// check database data and file data 
 	public boolean check(StudentModel dataFromDatabase, StudentModel studentModel) {
 		if (dataFromDatabase.getMarksModel().getMaths() != studentModel.getMarksModel().getMaths()
@@ -71,7 +70,6 @@ public class StudentDao implements StudentDaoInterface {
 		}
 		return false;
 	}
-
 	public void insert(StudentModel fileData) {
 		try (Connection connection = DBConnection.connect()) {
 			String insertQuery = "Insert into StudentDetails values(student_id,?,?,?,?,?,?,?)";
@@ -100,7 +98,6 @@ public class StudentDao implements StudentDaoInterface {
 			}
 		}
 	}
-
 	public void update(StudentModel studentModel, int student_id) {
 		try (Connection connection = DBConnection.connect()) {
 			MarksModel marks = studentModel.getMarksModel();
@@ -127,7 +124,6 @@ public class StudentDao implements StudentDaoInterface {
 			}
 		}
 	}
-
 	public void getHighestMarksInSubject(String subjectName) {
 		Scanner subject = null;
 		try (Connection connection = DBConnection.connect()) {
