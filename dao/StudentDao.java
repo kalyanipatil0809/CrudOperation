@@ -131,18 +131,12 @@ public class StudentDao implements StudentDaoInterface {
 	public void getHighestMarksInSubject(String subjectName) {
 		Scanner subject = null;
 		try (Connection connection = DBConnection.connect()) {
-
-			StringBuilder sbFetchQuery = new StringBuilder("select firstName,branch, ");
 			
-			sbFetchQuery.append(subjectName).append(" from studentdetails where ").append(subjectName)
-			.append(" in (select max(").append(subjectName + ")").append(" from studentdetails)");
-
-			String sb = sbFetchQuery.toString();
-			Statement statement = connection.createStatement();
-			ResultSet rs = statement.executeQuery(sb);
+			String fetchQuery = "select firstName,branch,"+subjectName+" from studentdetails where "+subjectName+" in (select max("+subjectName+") from studentdetails)";
+			preparedStatement = connection.prepareStatement(fetchQuery);
+			ResultSet resultSet = preparedStatement.executeQuery();
 			while (rs.next()) {
-				System.out.println(
-						rs.getString("firstName") + "--- " + rs.getString("branch") + "---" + rs.getInt(subjectName));
+				System.out.println(rs.getString("firstName") + "--- " + rs.getString("branch") + "---" + rs.getInt(subjectName));
 			}
 			System.out.println("Data searched successfully");
 
