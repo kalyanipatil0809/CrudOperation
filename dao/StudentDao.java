@@ -3,7 +3,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.Scanner;
 
 import org.apache.log4j.Logger;
@@ -12,7 +11,7 @@ import in.sts.excelutility.model.MarksModel;
 import in.sts.excelutility.model.StudentModel;
 import in.sts.excelutility.mysqlconnection.DBConnection;
 
-public class StudentDao implements StudentDaoInterface {
+public class StudentDao implements IstudentDao {
 	final Logger log = Logger.getLogger(StudentDao.class);
 
 	final int FIRST_NAME = 1;
@@ -23,21 +22,27 @@ public class StudentDao implements StudentDaoInterface {
 	final int ENGLISH = 6;
 	final int SCIENCE = 7;
 	final int PRESENT_FIRST_NAME = 1;
+	final int PRESENT_MIDDLE_NAME = 2;
+	final int PRESENT_LAST_NAME = 3;
 	final int UPDATE_BRANCH =1;
 	final int UPDATE_MATHS =2;
 	final int UPDATE_ENGLISH =3;
 	final int UPDATE_SCIENCE =4;
-	final int STUDENT_ID = 4;
+	final int STUDENT_ID = 5;
+	final int DELETE_STUDENT_ID=1;
 	PreparedStatement preparedStatement = null;
 
 	// retrive one data from database
-	public StudentModel retriveDataFromDatabase(String firstName) {
+	public StudentModel retriveDataFromDatabase(String firstName,String middleName,String lastName) {
 		StudentModel studentModel = new StudentModel();
 		try (Connection connection = DBConnection.connect()) {
 			ResultSet resultSet = null;
-			String sql = ("select * from StudentDetails where firstName=?");
+			String sql = ("select * from StudentDetails where firstName=? and middleName=? and lastName=?");
 			preparedStatement = connection.prepareStatement(sql);
 			preparedStatement.setString(PRESENT_FIRST_NAME, firstName);
+			preparedStatement.setString(PRESENT_MIDDLE_NAME, middleName);
+			preparedStatement.setString(PRESENT_LAST_NAME, lastName);
+//			
 			resultSet = preparedStatement.executeQuery();
 			while (resultSet.next()) {
 				// setting DB data into studentModel
@@ -58,10 +63,15 @@ public class StudentDao implements StudentDaoInterface {
 			log.error("Message = " + exception.getMessage());
 		}
 		studentModel = new StudentModel();
+		
 		return studentModel;
 	}
-	// check database data and file data 
-	public boolean check(StudentModel dataFromDatabase, StudentModel studentModel) {
+
+	
+	/**
+	 * 
+	 */
+	public boolean checkDBdataAndStudentmodelData(StudentModel dataFromDatabase, StudentModel studentModel) {
 		if (dataFromDatabase.getMarksModel().getMaths() != studentModel.getMarksModel().getMaths()
 				|| dataFromDatabase.getMarksModel().getEnglish() != studentModel.getMarksModel().getEnglish()
 				|| dataFromDatabase.getMarksModel().getScience() != studentModel.getMarksModel().getScience()
@@ -70,18 +80,19 @@ public class StudentDao implements StudentDaoInterface {
 		}
 		return false;
 	}
-	public void insert(StudentModel fileData) {
+
+	public void insert(StudentModel studentModel) {
 		try (Connection connection = DBConnection.connect()) {
 			String insertQuery = "Insert into StudentDetails values(student_id,?,?,?,?,?,?,?)";
 			preparedStatement = connection.prepareStatement(insertQuery);
-			if (preparedStatement != null && fileData != null) {
-				preparedStatement.setString(FIRST_NAME, fileData.getFirstName());
-				preparedStatement.setString(MIDDLE_NAME, fileData.getMiddleName());
-				preparedStatement.setString(LAST_NAME, fileData.getLastName());
-				preparedStatement.setString(BRANCH, fileData.getBranch());
-				preparedStatement.setInt(MATHS, fileData.getMarksModel().getMaths());
-				preparedStatement.setInt(ENGLISH, fileData.getMarksModel().getEnglish());
-				preparedStatement.setInt(SCIENCE, fileData.getMarksModel().getScience());
+			if (preparedStatement != null && studentModel != null) {
+				preparedStatement.setString(FIRST_NAME, studentModel.getFirstName());
+				preparedStatement.setString(MIDDLE_NAME, studentModel.getMiddleName());
+				preparedStatement.setString(LAST_NAME, studentModel.getLastName());
+				preparedStatement.setString(BRANCH, studentModel.getBranch());
+				preparedStatement.setInt(MATHS, studentModel.getMarksModel().getMaths());
+				preparedStatement.setInt(ENGLISH, studentModel.getMarksModel().getEnglish());
+				preparedStatement.setInt(SCIENCE, studentModel.getMarksModel().getScience());
 				preparedStatement.executeUpdate();
 			} else {
 				log.info("No record inserted...!");
@@ -98,11 +109,13 @@ public class StudentDao implements StudentDaoInterface {
 			}
 		}
 	}
+
 	public void update(StudentModel studentModel, int student_id) {
 		try (Connection connection = DBConnection.connect()) {
 			MarksModel marks = studentModel.getMarksModel();
 			String updateQuery = "update StudentDetails set branch=?, maths=? ,english=? ,science=?  where student_id = ?";
 			preparedStatement = connection.prepareStatement(updateQuery);
+			
 			preparedStatement.setString(UPDATE_BRANCH, studentModel.getBranch());
 			preparedStatement.setInt(UPDATE_MATHS, marks.getMaths());
 			preparedStatement.setInt(UPDATE_ENGLISH, marks.getEnglish());
@@ -110,7 +123,7 @@ public class StudentDao implements StudentDaoInterface {
 			preparedStatement.setInt(STUDENT_ID, student_id);
 
 			preparedStatement.executeUpdate();
-			System.out.println("Updated row: " + studentModel.getFirstName() + "||" + studentModel.getLastName());
+			System.out.println("Updated row: " + studentModel.getFirstName() + "||"+ studentModel.getMiddleName() + "||" + studentModel.getLastName());
 
 		} catch (SQLException sqlException) {
 			System.out.println("Message = " + sqlException.getMessage());
@@ -124,15 +137,16 @@ public class StudentDao implements StudentDaoInterface {
 			}
 		}
 	}
+	
 	public void getHighestMarksInSubject(String subjectName) {
 		Scanner subject = null;
 		try (Connection connection = DBConnection.connect()) {
-			
-			String fetchQuery = "select firstName,branch,"+subjectName+" from studentdetails where "+subjectName+" in (select max("+subjectName+") from studentdetails)";
-			preparedStatement = connection.prepareStatement(fetchQuery);
-			ResultSet resultSet = preparedStatement.executeQuery();
-			while (rs.next()) {
-				System.out.println(rs.getString("firstName") + "--- " + rs.getString("branch") + "---" + rs.getInt(subjectName));
+				String fetchQuery = "select firstName,branch,"+subjectName+" from studentdetails where "+subjectName+" in (select max("+subjectName+") from studentdetails)";
+				preparedStatement = connection.prepareStatement(fetchQuery);
+				ResultSet resultSet = preparedStatement.executeQuery();
+			while (resultSet.next()) {
+				System.out.println(
+						resultSet.getString("firstName") + "--- " + resultSet.getString("branch") + "---" + resultSet.getInt(subjectName));
 			}
 			System.out.println("Data searched successfully");
 
@@ -141,11 +155,32 @@ public class StudentDao implements StudentDaoInterface {
 			subject = new Scanner(System.in);
 			String subName = subject.nextLine();
 			getHighestMarksInSubject(subName);
-			
 		} finally {
 			if(subject !=null) 
 			subject.close();
+		}
+	}
+
+/**
+ * user defined parameters is firstName,middleName,lastName.
+ * fetching ID from retriveDataFromDatabase method. 
+ */
+	public void delete(String firstName, String middleName, String lastName) {
+		try (Connection connection = DBConnection.connect()) {
+			StudentModel studentModel = retriveDataFromDatabase(firstName, middleName, lastName);
 			
+			String deleteQuery = "delete from studentDetails where student_id=?";
+			preparedStatement = connection.prepareStatement(deleteQuery);
+			preparedStatement.setInt(DELETE_STUDENT_ID, studentModel.getStudent_id());
+
+		    if (preparedStatement.executeUpdate() > 0)
+		        System.out.println("Record deleted successfully.");
+		    else
+		        System.out.println("Record not found.");
+			
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 }

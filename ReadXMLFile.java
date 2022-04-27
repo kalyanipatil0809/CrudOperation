@@ -54,7 +54,8 @@ public class ReadXMLFile {
 			}
 		}
 		catch (SAXException exception) {
-			System.out.println("Error in parsin.." + exception.getMessage());
+			System.out.println("Error in parsing"
+					+ ".." + exception.getMessage());
 		} catch (IOException exception) {
 			System.out.println("Data Not Found..!");
 			readXML(file);

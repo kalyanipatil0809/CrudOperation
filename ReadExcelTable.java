@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Scanner;
@@ -26,8 +25,8 @@ public class ReadExcelTable {
 	public HashSet<StudentModel> readExcel(File file) {
 
 		Scanner fileInput = null;
-		ArrayList<StudentModel> arrayList = new ArrayList<StudentModel>();
-		HashSet<StudentModel> uniqueSet = null;
+//		ArrayList<StudentModel> arrayList = new ArrayList<StudentModel>();
+		HashSet<StudentModel> uniqueSet = new HashSet<StudentModel>();
 		try {
 			FileInputStream inputStream = new FileInputStream(file);
 
@@ -103,11 +102,11 @@ public class ReadExcelTable {
 
 					}
 					studentModel.setMarksModel(marksModel);
-					arrayList.add(studentModel);
+					uniqueSet.add(studentModel);
 				}
 
 			}
-			uniqueSet = new HashSet<StudentModel>(arrayList);
+			uniqueSet = new HashSet<StudentModel>();
 
 			workBook.close();
 
