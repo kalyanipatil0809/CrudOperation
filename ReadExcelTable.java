@@ -22,7 +22,6 @@ import in.sts.excelutility.model.StudentModel;
 public class ReadExcelTable {
 	final Logger log = Logger.getLogger(ReadExcelTable.class);
 	public HashSet<StudentModel> readExcel(File file) {
-		Scanner fileInput = null;
 		HashSet<StudentModel> uniqueSet = new HashSet<StudentModel>();
 		try {
 			FileInputStream inputStream = new FileInputStream(file);
