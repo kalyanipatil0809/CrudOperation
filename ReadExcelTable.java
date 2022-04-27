@@ -106,9 +106,6 @@ public class ReadExcelTable {
 			System.out.println("Message = " + exception.getMessage());
 		} catch (Exception exception) {
 			System.out.println("Message = " + exception.getMessage());
-		} finally {
-			if (fileInput != null)
-				fileInput.close();
 		}
 		return uniqueSet;
 	}
