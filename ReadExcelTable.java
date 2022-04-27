@@ -21,31 +21,23 @@ import in.sts.excelutility.model.StudentModel;
 
 public class ReadExcelTable {
 	final Logger log = Logger.getLogger(ReadExcelTable.class);
-
 	public HashSet<StudentModel> readExcel(File file) {
-
 		Scanner fileInput = null;
-//		ArrayList<StudentModel> arrayList = new ArrayList<StudentModel>();
 		HashSet<StudentModel> uniqueSet = new HashSet<StudentModel>();
 		try {
 			FileInputStream inputStream = new FileInputStream(file);
-
 			Workbook workBook = new XSSFWorkbook(inputStream);
 			DataFormatter dataFormatter = new DataFormatter();
 			Iterator<Sheet> sheet1 = workBook.sheetIterator();
-
 			while (sheet1.hasNext()) {
 				Sheet sh = sheet1.next();
 				Iterator<Row> iterator = sh.iterator();
 				while (iterator.hasNext()) {
 					Row row = iterator.next();
 					Iterator<Cell> cellIterator = row.iterator();
-
 					StudentModel studentModel = new StudentModel();
 					MarksModel marksModel = new MarksModel();
-
 					int count = 1;
-
 					String firstName = null;
 					String middleName = null;
 					String lastName = null;
@@ -99,22 +91,17 @@ public class ReadExcelTable {
 							count++;
 							break;
 						}
-
 					}
 					studentModel.setMarksModel(marksModel);
 					uniqueSet.add(studentModel);
 				}
-
 			}
 			uniqueSet = new HashSet<StudentModel>();
-
 			workBook.close();
-
 		} catch (FileNotFoundException exception) {
 			System.out.println("Please enter the correct file name..!");
 
 			readExcel(file);
-
 		} catch (IOException exception) {
 			System.out.println("Data Not Found");
 			System.out.println("Message = " + exception.getMessage());
@@ -125,6 +112,5 @@ public class ReadExcelTable {
 				fileInput.close();
 		}
 		return uniqueSet;
-
 	}
 }
