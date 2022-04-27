@@ -2,7 +2,6 @@ package in.sts.excelutility.files;
 
 import org.apache.log4j.Logger;
 
-import in.sts.excelutility.dao.StudentDao;
 import in.sts.excelutility.model.MarksModel;
 import in.sts.excelutility.model.StudentModel;
 
@@ -13,16 +12,16 @@ import java.io.IOException;
 import java.util.HashSet;
 
 public class ReadTextTable {
-	StudentDao studentDao = new StudentDao();
 	final Logger log = Logger.getLogger(ReadTextTable.class);
-
+	
 	public HashSet<StudentModel> readTable (File file) {
-		
+		FileReader fileReader=null;
+		BufferedReader bufferedReader= null;
 		HashSet<StudentModel> uniqueSet = new HashSet<StudentModel>();
 		try {
 			File inputFile = new File(file.toString());
-			FileReader fileReader = new FileReader(inputFile);
-			BufferedReader bufferedReader = new BufferedReader(fileReader);
+			fileReader = new FileReader(inputFile);
+			bufferedReader = new BufferedReader(fileReader);
 		
 			String line;
 			while ((line = bufferedReader.readLine()) != null) {
@@ -40,10 +39,18 @@ public class ReadTextTable {
 
 				uniqueSet.add(studentModel);
 			} 
-			fileReader.close();
-
+			
 		} catch (IOException e) {
 			System.out.println("Data Not Found..!");
+		}finally {
+			if(fileReader != null && bufferedReader!=null) {
+				try {
+					fileReader.close();
+					bufferedReader.close();
+				} catch (IOException exception) {
+					System.out.println("Message = " +exception.getMessage());
+				}
+			}
 		}
 		return uniqueSet;
 	}
