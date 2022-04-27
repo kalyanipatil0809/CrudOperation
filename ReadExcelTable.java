@@ -6,7 +6,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.Scanner;
 
 import org.apache.log4j.Logger;
 import org.apache.poi.ss.usermodel.Cell;
@@ -23,17 +22,21 @@ public class ReadExcelTable {
 	final Logger log = Logger.getLogger(ReadExcelTable.class);
 	public HashSet<StudentModel> readExcel(File file) {
 		HashSet<StudentModel> uniqueSet = new HashSet<StudentModel>();
+		Workbook workBook = null;
+		FileInputStream inputStream = null;
 		try {
-			FileInputStream inputStream = new FileInputStream(file);
-			Workbook workBook = new XSSFWorkbook(inputStream);
+			inputStream = new FileInputStream(file);
+			workBook = new XSSFWorkbook(inputStream);
 			DataFormatter dataFormatter = new DataFormatter();
 			Iterator<Sheet> sheet1 = workBook.sheetIterator();
+
 			while (sheet1.hasNext()) {
 				Sheet sh = sheet1.next();
 				Iterator<Row> iterator = sh.iterator();
 				while (iterator.hasNext()) {
 					Row row = iterator.next();
 					Iterator<Cell> cellIterator = row.iterator();
+
 					StudentModel studentModel = new StudentModel();
 					MarksModel marksModel = new MarksModel();
 					int count = 1;
@@ -96,16 +99,25 @@ public class ReadExcelTable {
 				}
 			}
 			uniqueSet = new HashSet<StudentModel>();
-			workBook.close();
+
 		} catch (FileNotFoundException exception) {
 			System.out.println("Please enter the correct file name..!");
-
 			readExcel(file);
+
 		} catch (IOException exception) {
 			System.out.println("Data Not Found");
-			System.out.println("Message = " + exception.getMessage());
+			log.error("Message = " + exception.getMessage());
 		} catch (Exception exception) {
-			System.out.println("Message = " + exception.getMessage());
+			log.error("Message = " + exception.getMessage());
+		} finally {
+			if (workBook != null && inputStream != null) {
+				try {
+					workBook.close();
+					inputStream.close();
+				} catch (IOException exception) {
+					log.error("Message = " + exception.getMessage());
+				}
+			}
 		}
 		return uniqueSet;
 	}
