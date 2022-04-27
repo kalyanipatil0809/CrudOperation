@@ -54,13 +54,12 @@ public class ReadXMLFile {
 			}
 		}
 		catch (SAXException exception) {
-			System.out.println("Error in parsing"
-					+ ".." + exception.getMessage());
+			log.error( exception.getMessage());
 		} catch (IOException exception) {
 			System.out.println("Data Not Found..!");
 			readXML(file);
 		} catch (ParserConfigurationException exception) {
-			System.out.println("Parsing error.." + exception.getMessage());
+			log.error(exception.getMessage());
 		}
 		return uniqueSet;
 	}
