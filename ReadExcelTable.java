@@ -98,7 +98,6 @@ public class ReadExcelTable {
 					uniqueSet.add(studentModel);
 				}
 			}
-			uniqueSet = new HashSet<StudentModel>();
 
 		} catch (FileNotFoundException exception) {
 			System.out.println("Please enter the correct file name..!");
