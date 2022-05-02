@@ -30,6 +30,15 @@ public class StudentDao implements IstudentDao {
 	final int UPDATE_SCIENCE =4;
 	final int STUDENT_ID = 5;
 	final int DELETE_STUDENT_ID=1;
+	final String DB_FIRST_NAME = "firstName";
+	final String DB_MIDDLE_NAME = "middleName";
+	final String DB_LAST_NAME = "lastName";
+	final String DB_BRANCH = "branch";
+	final String DB_MATHS = "branch";
+	final String DB_SCIENCE = "branch";
+	final String DB_ENGLISH = "branch";
+	final String DB_STUDENT_ID = "student_id";
+	
 	PreparedStatement preparedStatement = null;
 	Connection connection = null;
 	/**
@@ -51,15 +60,15 @@ public class StudentDao implements IstudentDao {
 				 *  setting DB data into studentModel
 				 */
 				studentModel = new StudentModel();
-				studentModel.setFirstName(resultSet.getString("FirstName"));
-				studentModel.setMiddleName(resultSet.getString("MiddleName"));
-				studentModel.setLastName(resultSet.getString("LastName"));
-				studentModel.setBranch(resultSet.getString("branch"));
-				studentModel.setStudent_id(resultSet.getInt("student_id"));
+				studentModel.setFirstName(resultSet.getString(DB_FIRST_NAME));
+				studentModel.setMiddleName(resultSet.getString(DB_MIDDLE_NAME));
+				studentModel.setLastName(resultSet.getString(DB_LAST_NAME));
+				studentModel.setBranch(resultSet.getString(DB_BRANCH));
+				studentModel.setStudent_id(resultSet.getInt(DB_STUDENT_ID));
 				MarksModel marksModel = new MarksModel();
-				marksModel.setMaths(Integer.valueOf(resultSet.getString("Maths")));
-				marksModel.setScience(Integer.valueOf(resultSet.getString("Science")));
-				marksModel.setEnglish(Integer.valueOf(resultSet.getString("English")));
+				marksModel.setMaths(Integer.valueOf(resultSet.getString(DB_MATHS)));
+				marksModel.setScience(Integer.valueOf(resultSet.getString(DB_SCIENCE)));
+				marksModel.setEnglish(Integer.valueOf(resultSet.getString(DB_ENGLISH)));
 				studentModel.setMarksModel(marksModel);
 				return studentModel;
 			}
